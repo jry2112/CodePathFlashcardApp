@@ -9,6 +9,7 @@ Flashcard App. Shows user a question and allows them to click text to reveal ans
 
 ### App Walk-though
 Required:
+
 <img src="https://raw.githubusercontent.com/jry2112/CodePathFlashcardApp/master/Demos/Flashcard1Required.gif" width=200><br>
 
 ## Required
