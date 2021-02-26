@@ -14,7 +14,7 @@
         android:textSize="40sp"
         android:textColor="@color/jetGrey"
         android:background="@drawable/card_background"
-        android:elevation="5dp"/>
+        android:elevation="10dp"/>
 
     <TextView
         android:id="@+id/flashcard_answer"
@@ -26,6 +26,48 @@
         android:text="Kareem Abdul-Jabbar"
         android:textSize="40sp"
         android:textColor="@color/jetGrey"
-        android:background="@drawable/card_background"/>
+        android:background="@drawable/answer_card_background"
+        android:elevation="10dp"/>
 
+    <TextView
+        android:id="@+id/answer_1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:layout_below="@id/flashcard_question"
+        android:layout_centerInParent="@+id/flashcard_question"
+        android:layout_marginVertical="10dp"
+        android:text="Kareem Abdul-Jabbar"
+        android:textSize="35sp"
+        android:textColor="@color/purple_700"
+        android:background="@color/jetGrey"
+        android:elevation="10dp"/>
+
+    <TextView
+        android:id="@+id/answer_2"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:layout_below="@id/answer_1"
+        android:layout_centerInParent="@+id/flashcard_question"
+        android:layout_marginVertical="10dp"
+        android:text="Michael Jordan"
+        android:textSize="35sp"
+        android:textColor="@color/purple_700"
+        android:background="@color/jetGrey"
+        android:elevation="10dp"/>
+
+    <TextView
+        android:id="@+id/answer_3"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:layout_below="@id/answer_2"
+        android:layout_centerInParent="@+id/flashcard_question"
+        android:layout_marginVertical="10dp"
+        android:text="Lebron James"
+        android:textSize="35sp"
+        android:textColor="@color/purple_700"
+        android:background="@color/jetGrey"
+        android:elevation="10dp"/>
 </RelativeLayout>
