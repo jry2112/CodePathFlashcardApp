@@ -74,20 +74,12 @@
     <ImageView
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/toggle_choices_visibility_up"
+        android:id="@+id/toggle_choices_visibility"
         android:src="@drawable/care_up_thin"
         android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
         android:paddingBottom="20dp"/>
 
-    <ImageView
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:id="@+id/toggle_choices_visibility_down"
-        android:src="@drawable/care_down_thin"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
-        android:paddingBottom="20dp"
-        android:visibility="invisible"/>
+
 
 </RelativeLayout>
