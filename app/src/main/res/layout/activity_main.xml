@@ -11,7 +11,10 @@
         android:layout_height="200dp"
         android:gravity="center"
         android:text="What NBA player has won the most league MVPs?"
-        android:textSize="40sp" />
+        android:textSize="40sp"
+        android:textColor="@color/jetGrey"
+        android:background="@drawable/card_background"
+        android:elevation="5dp"/>
 
     <TextView
         android:id="@+id/flashcard_answer"
@@ -21,7 +24,8 @@
         android:layout_centerInParent="@+id/flashcard_question"
         android:visibility="invisible"
         android:text="Kareem Abdul-Jabbar"
-        android:textSize="40sp" />
-
+        android:textSize="40sp"
+        android:textColor="@color/jetGrey"
+        android:background="@drawable/card_background"/>
 
 </RelativeLayout>

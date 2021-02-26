@@ -18,7 +18,8 @@ public class MainActivity extends AppCompatActivity {
 
         TextView flashcardQuestion = findViewById(R.id.flashcard_question);
         TextView flashcardAnswer = findViewById(R.id.flashcard_answer);
-        // User can tap the text to hide question and show answer
+
+        // User can tap the question text to hide question and show answer
         flashcardQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -26,7 +27,22 @@ public class MainActivity extends AppCompatActivity {
                 flashcardQuestion.setVisibility(View.INVISIBLE);
                 // Show answer
                 flashcardAnswer.setVisibility(View.VISIBLE);
+
             }
+
         });
+
+        // User can tap the answer text to hide answer and show question
+        flashcardAnswer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Hide answer
+                flashcardAnswer.setVisibility(View.INVISIBLE);
+                // Show question
+                flashcardQuestion.setVisibility(View.VISIBLE);
+            }
+
+        });
+
     }
 }
