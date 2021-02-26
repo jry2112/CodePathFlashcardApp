@@ -14,7 +14,7 @@ Required:
 
 Optional:
 
-<img src="https://raw.githubusercontent.com/jry2112/CodePathFlashcardApp/master/Demos/Flashcard1Optional.gif" width=200<br>
+<img src="https://raw.githubusercontent.com/jry2112/CodePathFlashcardApp/master/Demos/Flashcard1Optional.gif" width=200><br>
 ## Required
 - [x] Create New Project in Android Studio
 - [x] Add a view for the front side of the flashcard to display the question
