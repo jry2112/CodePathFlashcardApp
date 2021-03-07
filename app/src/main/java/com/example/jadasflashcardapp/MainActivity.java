@@ -2,6 +2,7 @@ package com.example.jadasflashcardapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,10 +25,7 @@ public class MainActivity extends AppCompatActivity {
         TextView wrongAnswer1 = findViewById(R.id.wrong_answer_1);
         TextView wrongAnswer2 = findViewById(R.id.wrong_answer_2);
         ImageView showAnswersIcon = findViewById(R.id.toggle_choices_visibility);
-
-
-
-
+        ImageView addCardIcon = findViewById(R.id.add_new_card);
 
 
         // User can tap the question text to hide question and show answer
@@ -110,5 +108,24 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+        // Create new card
+        addCardIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AddCardActivity.class);
+                MainActivity.this.startActivityForResult(intent, 100);
+            }
+        });
+    }
+    // Save and display newly created card
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 100) { //code for creating a new card
+            String question = data.getExtras().getString("questionText");
+            String answer = data.getExtras().getString("answerText");
+            // Update question and answer on flashcard
+            ((TextView) findViewById(R.id.flashcard_question)).setText(question);
+            ((TextView) findViewById(R.id.flashcard_answer)).setText(answer);
+        }
     }
 }

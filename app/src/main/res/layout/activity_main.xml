@@ -80,6 +80,15 @@
         android:layout_centerInParent="true"
         android:paddingBottom="20dp"/>
 
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/add_new_card"
+        android:src="@drawable/plus_thin"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="20dp"/>
+
 
 
 </RelativeLayout>
