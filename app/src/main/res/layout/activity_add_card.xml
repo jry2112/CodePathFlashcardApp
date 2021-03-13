@@ -31,7 +31,9 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_margin="20dp"
-        android:hint="Enter Question Here"/>
+        android:hint="Enter Question Here"
+        android:textColorHint="@color/bedazzledBlue"
+        android:textColor="@color/cyberGrape"/>
 
     <EditText
         android:id="@+id/addAnswerField"
@@ -39,7 +41,28 @@
         android:layout_height="70dp"
         android:layout_margin="20dp"
         android:layout_below="@+id/addQuestionField"
-        android:hint="Enter Question Here"/>
+        android:hint="Enter Answer Here"
+        android:textColorHint="@color/bedazzledBlue"
+        android:textColor="@color/cyberGrape"/>
 
+    <EditText
+        android:id="@+id/addWrongAnswerField1"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="20dp"
+        android:layout_below="@+id/addAnswerField"
+        android:hint="Enter Wrong Answer Here"
+        android:textColorHint="@color/bedazzledBlue"
+        android:textColor="@color/cyberGrape"/>
+
+    <EditText
+        android:id="@+id/addWrongAnswerField2"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_margin="20dp"
+        android:layout_below="@+id/addWrongAnswerField1"
+        android:hint="Enter Wrong Answer Here"
+        android:textColorHint="@color/bedazzledBlue"
+        android:textColor="@color/cyberGrape"/>
 
 </RelativeLayout>

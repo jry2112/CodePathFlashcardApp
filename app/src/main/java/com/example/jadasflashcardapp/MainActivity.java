@@ -9,6 +9,8 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         TextView wrongAnswer2 = findViewById(R.id.wrong_answer_2);
         ImageView showAnswersIcon = findViewById(R.id.toggle_choices_visibility);
         ImageView addCardIcon = findViewById(R.id.add_new_card);
+        ImageView editCardIcon = findViewById(R.id.edit_card);
 
 
         // User can tap the question text to hide question and show answer
@@ -116,16 +119,40 @@ public class MainActivity extends AppCompatActivity {
                 MainActivity.this.startActivityForResult(intent, 100);
             }
         });
+
+        // Edit current card
+        editCardIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get currently displayed question and answer
+                // Pass to AddCardActivity
+                Intent intent = new Intent(MainActivity.this, AddCardActivity.class);
+                intent.putExtra("question", flashcardQuestion.getText().toString());
+                intent.putExtra("answer", flashcardAnswer.getText().toString());
+                MainActivity.this.startActivityForResult(intent, 100);
+
+            }
+        });
     }
     // Save and display newly created card
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 100) { //code for creating a new card
+        if (requestCode == 100 && resultCode == RESULT_OK) { //code for creating a new card
             String question = data.getExtras().getString("questionText");
             String answer = data.getExtras().getString("answerText");
+            String wrongAnswer1 = data.getExtras().getString("wrongAnswerText1");
+            String wrongAnswer2 = data.getExtras().getString("wrongAnswerText2");
             // Update question and answer on flashcard
             ((TextView) findViewById(R.id.flashcard_question)).setText(question);
             ((TextView) findViewById(R.id.flashcard_answer)).setText(answer);
+            ((TextView) findViewById(R.id.correct_answer)).setText(answer);
+            ((TextView) findViewById(R.id.wrong_answer_1)).setText(wrongAnswer1);
+            ((TextView) findViewById(R.id.wrong_answer_2)).setText(wrongAnswer2);
+            // Notify success
+            Snackbar.make(findViewById(R.id.flashcard_question),
+                    "Card successfully created.",
+                    Snackbar.LENGTH_SHORT)
+                    .show();
         }
     }
 }
