@@ -20,31 +20,40 @@ public class MainActivity extends AppCompatActivity {
     FlashcardDatabase flashcardDatabase;
     // Holds list of Flashcards
     List<Flashcard> allFlashcards;
-    int index = -1;
-
+    private int index = -1;
     private boolean isAnswerShowing;
+    private TextView flashcardQuestion;
+    private TextView flashcardAnswer;
+    private TextView correctAnswer;
+    private TextView wrongAnswer1;
+    private TextView wrongAnswer2;
+    private ImageView showAnswersIcon;
+    private ImageView addCardIcon;
+    private ImageView editCardIcon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // Initializes database
         flashcardDatabase = new FlashcardDatabase(getApplicationContext());
-        // Read from the database when the app is launched
         allFlashcards = flashcardDatabase.getAllCards();
-
-        // If the list is not empty, display saved flashcard
-        if (allFlashcards.size() ){
-
+        // Read from the database when the app is launched
+        if(allFlashcards != null && allFlashcards.size() > 0) {
+            ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(0).getQuestion());
+            ((TextView) findViewById(R.id.flashcard_answer)).setText(allFlashcards.get(0).getAnswer());
+            ((TextView) findViewById(R.id.correct_answer)).setText(allFlashcards.get(0).getAnswer());
+            ((TextView) findViewById(R.id.wrong_answer_1)).setText(allFlashcards.get(0).getWrongAnswer1());
+            ((TextView) findViewById(R.id.wrong_answer_2)).setText(allFlashcards.get(0).getWrongAnswer2());
         }
-
-        TextView flashcardQuestion = findViewById(R.id.flashcard_question);
-        TextView flashcardAnswer = findViewById(R.id.flashcard_answer);
-        TextView correctAnswer = findViewById(R.id.correct_answer);
-        TextView wrongAnswer1 = findViewById(R.id.wrong_answer_1);
-        TextView wrongAnswer2 = findViewById(R.id.wrong_answer_2);
-        ImageView showAnswersIcon = findViewById(R.id.toggle_choices_visibility);
-        ImageView addCardIcon = findViewById(R.id.add_new_card);
-        ImageView editCardIcon = findViewById(R.id.edit_card);
+        // If the list is not empty, display saved flashcard
+            flashcardQuestion = findViewById(R.id.flashcard_question);
+            flashcardAnswer = findViewById(R.id.flashcard_answer);
+            correctAnswer = findViewById(R.id.correct_answer);
+            wrongAnswer1 = findViewById(R.id.wrong_answer_1);
+            wrongAnswer2 = findViewById(R.id.wrong_answer_2);
+            showAnswersIcon = findViewById(R.id.toggle_choices_visibility);
+            addCardIcon = findViewById(R.id.add_new_card);
+            editCardIcon = findViewById(R.id.edit_card);
 
 
         // User can tap the question text to hide question and show answer
@@ -170,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(findViewById(R.id.flashcard_question),
                     "Card successfully created.", Snackbar.LENGTH_SHORT).show();
             // Add to database
-            flashcardDatabase.insertCard(new Flashcard(question, answer));
+            flashcardDatabase.insertCard(new Flashcard(question, answer, wrongAnswer1, wrongAnswer2));
             allFlashcards = flashcardDatabase.getAllCards();    // Updates list of cards
         }
     }
