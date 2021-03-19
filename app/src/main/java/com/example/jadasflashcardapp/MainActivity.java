@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, AddCardActivity.class);
                 intent.putExtra("question", flashcardQuestion.getText().toString());
                 intent.putExtra("answer", flashcardAnswer.getText().toString());
+                intent.putExtra("wrongAnswer1", wrongAnswer1.getText().toString());
+                intent.putExtra("wrongAnswer2", wrongAnswer2.getText().toString());
                 MainActivity.this.startActivityForResult(intent, 100);
 
             }
