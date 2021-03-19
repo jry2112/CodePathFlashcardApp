@@ -13,13 +13,29 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.w3c.dom.Text;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
+
+    FlashcardDatabase flashcardDatabase;
+    // Holds list of Flashcards
+    List<Flashcard> allFlashcards;
+    int index = -1;
 
     private boolean isAnswerShowing;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Initializes database
+        flashcardDatabase = new FlashcardDatabase(getApplicationContext());
+        // Read from the database when the app is launched
+        allFlashcards = flashcardDatabase.getAllCards();
+
+        // If the list is not empty, display saved flashcard
+        if (allFlashcards.size() ){
+
+        }
 
         TextView flashcardQuestion = findViewById(R.id.flashcard_question);
         TextView flashcardAnswer = findViewById(R.id.flashcard_answer);
@@ -152,9 +168,10 @@ public class MainActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.wrong_answer_2)).setText(wrongAnswer2);
             // Notify success
             Snackbar.make(findViewById(R.id.flashcard_question),
-                    "Card successfully created.",
-                    Snackbar.LENGTH_SHORT)
-                    .show();
+                    "Card successfully created.", Snackbar.LENGTH_SHORT).show();
+            // Add to database
+            flashcardDatabase.insertCard(new Flashcard(question, answer));
+            allFlashcards = flashcardDatabase.getAllCards();    // Updates list of cards
         }
     }
 }
