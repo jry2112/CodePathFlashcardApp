@@ -16,6 +16,9 @@ import org.w3c.dom.Text;
 
 import java.util.List;
 
+import java.util.Random;
+
+
 public class MainActivity extends AppCompatActivity {
 
     FlashcardDatabase flashcardDatabase;
@@ -33,6 +36,11 @@ public class MainActivity extends AppCompatActivity {
     private ImageView editCardIcon;
     private ImageView nextCardIcon;
     private ImageView deleteCardIcon;
+
+    public int getRandomNumber(int minNumber, int maxNumber) {
+        Random rand = new Random();
+        return rand.nextInt((maxNumber - minNumber) + 1) + minNumber;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         editCardIcon = findViewById(R.id.edit_card);
         nextCardIcon = findViewById(R.id.next_card);
         deleteCardIcon = findViewById(R.id.delete_card);
-
 
         // User can tap the question text to hide question and show answer
         flashcardQuestion.setOnClickListener(new View.OnClickListener() {
@@ -174,8 +181,14 @@ public class MainActivity extends AppCompatActivity {
                 // don't try to go to next card if you have no cards to begin with
                 if (allFlashcards.size() == 0)
                     return;
-                // advance our pointer index so we can show the next card
-                currentCardDisplayedIndex++;
+
+                // generate random card
+                int randomCardIndex = getRandomNumber(0, allFlashcards.size());
+                while (currentCardDisplayedIndex == randomCardIndex) {
+                    randomCardIndex = getRandomNumber(0, allFlashcards.size());
+                }
+                currentCardDisplayedIndex = randomCardIndex;
+
                 // make sure we don't get an IndexOutOfBoundsError if we are viewing the last index
                 if (currentCardDisplayedIndex >= allFlashcards.size()) {
                     currentCardDisplayedIndex = 0;
