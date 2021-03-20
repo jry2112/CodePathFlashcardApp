@@ -1,5 +1,6 @@
 package com.example.jadasflashcardapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     FlashcardDatabase flashcardDatabase;
     // Holds list of Flashcards
     List<Flashcard> allFlashcards;
-    private int index = -1;
+    private int currentCardDisplayedIndex = 0;
     private boolean isAnswerShowing;
     private TextView flashcardQuestion;
     private TextView flashcardAnswer;
@@ -30,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView showAnswersIcon;
     private ImageView addCardIcon;
     private ImageView editCardIcon;
+    private ImageView nextCardIcon;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         flashcardDatabase = new FlashcardDatabase(getApplicationContext());
         allFlashcards = flashcardDatabase.getAllCards();
         // Read from the database when the app is launched
+        // If the list is not empty, display saved flashcard
         if(allFlashcards != null && allFlashcards.size() > 0) {
             ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(0).getQuestion());
             ((TextView) findViewById(R.id.flashcard_answer)).setText(allFlashcards.get(0).getAnswer());
@@ -45,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.wrong_answer_1)).setText(allFlashcards.get(0).getWrongAnswer1());
             ((TextView) findViewById(R.id.wrong_answer_2)).setText(allFlashcards.get(0).getWrongAnswer2());
         }
-        // If the list is not empty, display saved flashcard
+
             flashcardQuestion = findViewById(R.id.flashcard_question);
             flashcardAnswer = findViewById(R.id.flashcard_answer);
             correctAnswer = findViewById(R.id.correct_answer);
@@ -54,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
             showAnswersIcon = findViewById(R.id.toggle_choices_visibility);
             addCardIcon = findViewById(R.id.add_new_card);
             editCardIcon = findViewById(R.id.edit_card);
+            nextCardIcon = findViewById(R.id.next_card);
 
 
         // User can tap the question text to hide question and show answer
@@ -158,6 +163,31 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("wrongAnswer2", wrongAnswer2.getText().toString());
                 MainActivity.this.startActivityForResult(intent, 100);
 
+            }
+        });
+
+    // Click next icon to view next card
+        nextCardIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // don't try to go to next card if you have no cards to begin with
+                if (allFlashcards.size() == 0)
+                    return;
+                // advance our pointer index so we can show the next card
+                currentCardDisplayedIndex ++;
+                // make sure we don't get an IndexOutOfBoundsError if we are viewing the last index
+                if (currentCardDisplayedIndex >= allFlashcards.size()){
+                    currentCardDisplayedIndex = 0;
+                }
+                // set the question and answer TextViews with data from the database
+                allFlashcards = flashcardDatabase.getAllCards();
+                Flashcard flashcard = allFlashcards.get(currentCardDisplayedIndex);
+
+                flashcardQuestion.setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
+                flashcardAnswer.setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+                correctAnswer.setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+                wrongAnswer1.setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer1());
+                wrongAnswer2.setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer2());
             }
         });
     }
