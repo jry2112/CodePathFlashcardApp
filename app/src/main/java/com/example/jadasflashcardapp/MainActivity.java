@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView addCardIcon;
     private ImageView editCardIcon;
     private ImageView nextCardIcon;
+    private ImageView deleteCardIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         allFlashcards = flashcardDatabase.getAllCards();
         // Read from the database when the app is launched
         // If the list is not empty, display saved flashcard
-        if(allFlashcards != null && allFlashcards.size() > 0) {
+        if (allFlashcards != null && allFlashcards.size() > 0) {
             ((TextView) findViewById(R.id.flashcard_question)).setText(allFlashcards.get(0).getQuestion());
             ((TextView) findViewById(R.id.flashcard_answer)).setText(allFlashcards.get(0).getAnswer());
             ((TextView) findViewById(R.id.correct_answer)).setText(allFlashcards.get(0).getAnswer());
@@ -50,15 +51,16 @@ public class MainActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.wrong_answer_2)).setText(allFlashcards.get(0).getWrongAnswer2());
         }
 
-            flashcardQuestion = findViewById(R.id.flashcard_question);
-            flashcardAnswer = findViewById(R.id.flashcard_answer);
-            correctAnswer = findViewById(R.id.correct_answer);
-            wrongAnswer1 = findViewById(R.id.wrong_answer_1);
-            wrongAnswer2 = findViewById(R.id.wrong_answer_2);
-            showAnswersIcon = findViewById(R.id.toggle_choices_visibility);
-            addCardIcon = findViewById(R.id.add_new_card);
-            editCardIcon = findViewById(R.id.edit_card);
-            nextCardIcon = findViewById(R.id.next_card);
+        flashcardQuestion = findViewById(R.id.flashcard_question);
+        flashcardAnswer = findViewById(R.id.flashcard_answer);
+        correctAnswer = findViewById(R.id.correct_answer);
+        wrongAnswer1 = findViewById(R.id.wrong_answer_1);
+        wrongAnswer2 = findViewById(R.id.wrong_answer_2);
+        showAnswersIcon = findViewById(R.id.toggle_choices_visibility);
+        addCardIcon = findViewById(R.id.add_new_card);
+        editCardIcon = findViewById(R.id.edit_card);
+        nextCardIcon = findViewById(R.id.next_card);
+        deleteCardIcon = findViewById(R.id.delete_card);
 
 
         // User can tap the question text to hide question and show answer
@@ -125,13 +127,12 @@ public class MainActivity extends AppCompatActivity {
         showAnswersIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isAnswerShowing){
+                if (isAnswerShowing) {
                     showAnswersIcon.setImageResource(R.drawable.care_up_thin);
                     correctAnswer.setVisibility(View.VISIBLE);
                     wrongAnswer1.setVisibility(View.VISIBLE);
                     wrongAnswer2.setVisibility(View.VISIBLE);
-                }
-                else{
+                } else {
                     showAnswersIcon.setImageResource(R.drawable.care_down_thin);
                     correctAnswer.setVisibility(View.INVISIBLE);
                     wrongAnswer1.setVisibility(View.INVISIBLE);
@@ -166,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    // Click next icon to view next card
+        // Click next icon to view next card
         nextCardIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,9 +175,9 @@ public class MainActivity extends AppCompatActivity {
                 if (allFlashcards.size() == 0)
                     return;
                 // advance our pointer index so we can show the next card
-                currentCardDisplayedIndex ++;
+                currentCardDisplayedIndex++;
                 // make sure we don't get an IndexOutOfBoundsError if we are viewing the last index
-                if (currentCardDisplayedIndex >= allFlashcards.size()){
+                if (currentCardDisplayedIndex >= allFlashcards.size()) {
                     currentCardDisplayedIndex = 0;
                 }
                 // set the question and answer TextViews with data from the database
@@ -190,27 +191,69 @@ public class MainActivity extends AppCompatActivity {
                 wrongAnswer2.setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer2());
             }
         });
+
+        // Delete card from view and database
+        deleteCardIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check if size is already 0
+                if (allFlashcards.size() == 0)
+                    return;
+
+                // delete current card and update database
+                flashcardDatabase.deleteCard(flashcardQuestion.getText().toString());
+                allFlashcards = flashcardDatabase.getAllCards();
+                // Prompt user to create new card if no cards exist in the database
+                if (allFlashcards.size() == 0) {
+                    flashcardQuestion.setText("Click '+' to get started and create a new card!");
+                    flashcardAnswer.setText("Click '+' to get started and create a new card!");
+                    correctAnswer.setText(null);
+                    wrongAnswer1.setText(null);
+                    wrongAnswer2.setText(null);
+                    currentCardDisplayedIndex = 0;
+                }
+
+                else{
+                    if (currentCardDisplayedIndex == 0) {
+                        // if deleting first card get next card
+                        currentCardDisplayedIndex ++;
+                    }
+                    else {
+                        // if deleting other card set card to previous card
+                        currentCardDisplayedIndex--;
+                    }
+                    // Update card
+                    Flashcard flashcard = allFlashcards.get(currentCardDisplayedIndex);
+                    flashcardQuestion.setText(flashcard.getQuestion());
+                    flashcardAnswer.setText(flashcard.getAnswer());
+                    correctAnswer.setText(flashcard.getAnswer());
+                    wrongAnswer1.setText(flashcard.getWrongAnswer1());
+                    wrongAnswer2.setText(flashcard.getWrongAnswer2());
+                }
+            }
+        });
     }
-    // Save and display newly created card
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 100 && resultCode == RESULT_OK) { //code for creating a new card
-            String question = data.getExtras().getString("questionText");
-            String answer = data.getExtras().getString("answerText");
-            String wrongAnswer1 = data.getExtras().getString("wrongAnswerText1");
-            String wrongAnswer2 = data.getExtras().getString("wrongAnswerText2");
-            // Update question and answer on flashcard
-            ((TextView) findViewById(R.id.flashcard_question)).setText(question);
-            ((TextView) findViewById(R.id.flashcard_answer)).setText(answer);
-            ((TextView) findViewById(R.id.correct_answer)).setText(answer);
-            ((TextView) findViewById(R.id.wrong_answer_1)).setText(wrongAnswer1);
-            ((TextView) findViewById(R.id.wrong_answer_2)).setText(wrongAnswer2);
-            // Notify success
-            Snackbar.make(findViewById(R.id.flashcard_question),
-                    "Card successfully created.", Snackbar.LENGTH_SHORT).show();
-            // Add to database
-            flashcardDatabase.insertCard(new Flashcard(question, answer, wrongAnswer1, wrongAnswer2));
-            allFlashcards = flashcardDatabase.getAllCards();    // Updates list of cards
+
+        // Save and display newly created card
+        @Override
+        protected void onActivityResult ( int requestCode, int resultCode, Intent data){
+            if (requestCode == 100 && resultCode == RESULT_OK) { //code for creating a new card
+                String question = data.getExtras().getString("questionText");
+                String answer = data.getExtras().getString("answerText");
+                String wrongAnswer1 = data.getExtras().getString("wrongAnswerText1");
+                String wrongAnswer2 = data.getExtras().getString("wrongAnswerText2");
+                // Update question and answer on flashcard
+                ((TextView) findViewById(R.id.flashcard_question)).setText(question);
+                ((TextView) findViewById(R.id.flashcard_answer)).setText(answer);
+                ((TextView) findViewById(R.id.correct_answer)).setText(answer);
+                ((TextView) findViewById(R.id.wrong_answer_1)).setText(wrongAnswer1);
+                ((TextView) findViewById(R.id.wrong_answer_2)).setText(wrongAnswer2);
+                // Notify success
+                Snackbar.make(findViewById(R.id.flashcard_question),
+                        "Card successfully created.", Snackbar.LENGTH_SHORT).show();
+                // Add to database
+                flashcardDatabase.insertCard(new Flashcard(question, answer, wrongAnswer1, wrongAnswer2));
+                allFlashcards = flashcardDatabase.getAllCards();    // Updates list of cards
+            }
         }
     }
-}

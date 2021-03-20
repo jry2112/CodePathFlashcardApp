@@ -96,10 +96,10 @@
         android:layout_height="60dp"
         android:id="@+id/edit_card"
         android:src="@drawable/pencil"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:paddingBottom="20dp"
-        android:layout_marginLeft="20dp"/>
+        android:layout_below="@id/wrong_answer_2"
+        android:layout_alignParentRight="true"
+        android:paddingTop="20dp"
+        android:layout_marginRight="20dp" />
 
     <ImageView
         android:layout_width="60dp"
@@ -110,6 +110,16 @@
         android:layout_alignParentBottom="true"
         android:paddingBottom="20dp"
         android:layout_marginRight="20dp"/>
+
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/delete_card"
+        android:src="@drawable/trash_can"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:paddingBottom="20dp"
+        android:layout_marginLeft="20dp"/>
 
 
 </RelativeLayout>
