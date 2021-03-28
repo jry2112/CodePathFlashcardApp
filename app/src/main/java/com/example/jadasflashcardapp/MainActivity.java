@@ -3,10 +3,14 @@ package com.example.jadasflashcardapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewAnimationUtils;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -74,10 +78,22 @@ public class MainActivity extends AppCompatActivity {
         flashcardQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                View answerSideView = findViewById(R.id.flashcard_answer);
+                //Circular Animation
+                // get the center for the clipping circle
+                int cx = answerSideView.getWidth() / 2;
+                int cy = answerSideView.getHeight() / 2;
+                // get the final radius for the clipping circle
+                float finalRadius = (float) Math.hypot(cx, cy);
+                // Create the animator for this view (the start radius is zero)
+                Animator anim = ViewAnimationUtils.createCircularReveal(answerSideView, cx, cy, 0f, finalRadius);
                 // Hide question
                 flashcardQuestion.setVisibility(View.INVISIBLE);
                 // Show answer
                 flashcardAnswer.setVisibility(View.VISIBLE);
+
+                anim.setDuration(500);
+                anim.start();
 
             }
 
@@ -155,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, AddCardActivity.class);
                 MainActivity.this.startActivityForResult(intent, 100);
+                overridePendingTransition(R.anim.right_in, R.anim.left_out);
             }
         });
 
@@ -182,26 +199,53 @@ public class MainActivity extends AppCompatActivity {
                 if (allFlashcards.size() == 0)
                     return;
 
-                // generate random card
-                int randomCardIndex = getRandomNumber(0, allFlashcards.size());
-                while (currentCardDisplayedIndex == randomCardIndex) {
-                    randomCardIndex = getRandomNumber(0, allFlashcards.size());
-                }
-                currentCardDisplayedIndex = randomCardIndex;
+                // Animation
+                final Animation leftOutAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.left_out);
+                final Animation rightInAnim = AnimationUtils.loadAnimation(v.getContext(), R.anim.right_in);
 
-                // make sure we don't get an IndexOutOfBoundsError if we are viewing the last index
-                if (currentCardDisplayedIndex >= allFlashcards.size()) {
-                    currentCardDisplayedIndex = 0;
-                }
+                leftOutAnim.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        // this method is called when the animation first starts
+                        // generate random card
+                        int randomCardIndex = getRandomNumber(0, allFlashcards.size()-1);
+                        while (currentCardDisplayedIndex == randomCardIndex){
+                            randomCardIndex = getRandomNumber(0, allFlashcards.size()-1);
+                        }
+                        currentCardDisplayedIndex = randomCardIndex;
+
+                        // make sure we don't get an IndexOutOfBoundsError if we are viewing the last index
+                        if (currentCardDisplayedIndex >= allFlashcards.size()) {
+                            currentCardDisplayedIndex = 0;
+                        }
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        // this animation is called when the animation is finished playing
+                        allFlashcards = flashcardDatabase.getAllCards();
+                        Flashcard flashcard = allFlashcards.get(currentCardDisplayedIndex);
+
+                        flashcardQuestion.setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
+                        flashcardAnswer.setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+                        correctAnswer.setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
+                        wrongAnswer1.setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer1());
+                        wrongAnswer2.setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer2());
+                        flashcardQuestion.startAnimation(rightInAnim);
+
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                        // not needed
+                    }
+                });
+                flashcardQuestion.startAnimation(leftOutAnim);
+
                 // set the question and answer TextViews with data from the database
-                allFlashcards = flashcardDatabase.getAllCards();
-                Flashcard flashcard = allFlashcards.get(currentCardDisplayedIndex);
 
-                flashcardQuestion.setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
-                flashcardAnswer.setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
-                correctAnswer.setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
-                wrongAnswer1.setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer1());
-                wrongAnswer2.setText(allFlashcards.get(currentCardDisplayedIndex).getWrongAnswer2());
             }
         });
 
