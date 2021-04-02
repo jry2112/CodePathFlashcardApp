@@ -23,12 +23,12 @@
 - [ ] User sees a celebration animation with confetti when they answer a question correctly## Lab 3
 
 ### App Description
-Users can create multiples cards, save them, and advance through all saved cards.
+Users can create multiples cards, save or delete them, and advance through all saved cards.
 
 ### App Walk-though
 
 <img src="https://github.com/jry2112/CodePathFlashcardApp/blob/master/Demos/Flashcard3Required.gif" width=200><br>
-<img src="https://github.com/jry2112/CodePathFlashcardApp/blob/master/Demos/Flashcard3Required.gif" width=200><br>
+<img src="https://github.com/jry2112/CodePathFlashcardApp/blob/master/Demos/Flashcard3Optional1.gif" width=200><br>
 
 ## Required
 - [x] User can create a card and still see their created card when the app is relaunched.
