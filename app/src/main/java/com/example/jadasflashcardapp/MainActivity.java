@@ -6,15 +6,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.animation.Animator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewAnimationUtils;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.plattysoft.leonids.ParticleSystem;
 
 import org.w3c.dom.Text;
 
@@ -40,10 +43,16 @@ public class MainActivity extends AppCompatActivity {
     private ImageView editCardIcon;
     private ImageView nextCardIcon;
     private ImageView deleteCardIcon;
+    CountDownTimer countDownTimer;
 
     public int getRandomNumber(int minNumber, int maxNumber) {
         Random rand = new Random();
         return rand.nextInt((maxNumber - minNumber) + 1) + minNumber;
+    }
+
+    private void startTimer() {
+        countDownTimer.cancel();
+        countDownTimer.start();
     }
 
     @Override
@@ -74,6 +83,38 @@ public class MainActivity extends AppCompatActivity {
         nextCardIcon = findViewById(R.id.next_card);
         deleteCardIcon = findViewById(R.id.delete_card);
 
+        // Countdown Timer
+        countDownTimer = new CountDownTimer(16000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                int time = (int) (millisUntilFinished / 1000);
+                int blinkTime = 0;
+                TextView timer = findViewById(R.id.timer);
+                timer.setText("" + millisUntilFinished / 1000);
+                // blinking animation
+                if (time <= 5) {
+                    while (blinkTime < 50) {
+                        if (timer.getVisibility() == View.VISIBLE) {
+                            timer.setVisibility(View.INVISIBLE);
+                        }
+                        else {
+                            timer.setVisibility(View.VISIBLE);
+                        }
+                        blinkTime ++;
+                    }
+                }
+
+            }
+
+            public void onFinish() {
+
+                }
+        };
+
+        // Countdown Timer
+        startTimer();
+        countDownTimer.onFinish();
+
         // User can tap the question text to hide question and show answer
         flashcardQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,9 +128,14 @@ public class MainActivity extends AppCompatActivity {
                 float finalRadius = (float) Math.hypot(cx, cy);
                 // Create the animator for this view (the start radius is zero)
                 Animator anim = ViewAnimationUtils.createCircularReveal(answerSideView, cx, cy, 0f, finalRadius);
+
                 // Hide question
                 flashcardQuestion.setVisibility(View.INVISIBLE);
                 // Show answer
+                flashcardAnswer.animate()
+                        .rotationY(0)
+                        .setDuration(0)
+                        .start();
                 flashcardAnswer.setVisibility(View.VISIBLE);
 
                 anim.setDuration(500);
@@ -103,10 +149,27 @@ public class MainActivity extends AppCompatActivity {
         flashcardAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Hide answer
-                flashcardAnswer.setVisibility(View.INVISIBLE);
-                // Show question
-                flashcardQuestion.setVisibility(View.VISIBLE);
+                flashcardQuestion.setCameraDistance(25000);
+                flashcardAnswer.setCameraDistance(25000);
+                // Flip animation
+                flashcardAnswer.animate()
+                        .rotationY(90)
+                        .setDuration(200)
+                        .withEndAction(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        flashcardAnswer.setVisibility(View.INVISIBLE);
+                                        flashcardQuestion.setVisibility(View.VISIBLE);
+                                        //second quarter turn
+                                        flashcardQuestion.setRotationY(-90);
+                                        flashcardQuestion.animate()
+                                                .rotationY(0)
+                                                .setDuration(200)
+                                                .start();
+                                    }
+                                }
+                        ).start();
             }
 
         });
@@ -143,9 +206,27 @@ public class MainActivity extends AppCompatActivity {
                 // Change correct answer background to green
                 correctAnswer.setBackgroundColor(getResources().getColor(R.color.oceanGreen,
                         null));
+                // Confetti
+                new ParticleSystem(MainActivity.this, 100, R.drawable.confetti, 3000)
+                        .setSpeedRange(0.2f, 0.5f)
+                        .oneShot(correctAnswer, 150);
             }
 
         });
+        // Long press Correct answer to reset colors
+        correctAnswer.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // Change correct answer background to green
+                correctAnswer.setBackgroundColor(getResources().getColor(R.color.jetGrey));
+                wrongAnswer1.setBackgroundColor(getResources().getColor(R.color.jetGrey));
+                wrongAnswer2.setBackgroundColor(getResources().getColor(R.color.jetGrey));
+                return true;
+            }
+
+                });
+
+
         // Toggle show answer icon based on click
         showAnswersIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,6 +300,9 @@ public class MainActivity extends AppCompatActivity {
                             currentCardDisplayedIndex = 0;
                         }
 
+                        // Countdown Timer
+                        startTimer();
+
                     }
 
                     @Override
@@ -226,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
                         // this animation is called when the animation is finished playing
                         allFlashcards = flashcardDatabase.getAllCards();
                         Flashcard flashcard = allFlashcards.get(currentCardDisplayedIndex);
-
+                        // set the question and answer TextViews with data from the database
                         flashcardQuestion.setText(allFlashcards.get(currentCardDisplayedIndex).getQuestion());
                         flashcardAnswer.setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
                         correctAnswer.setText(allFlashcards.get(currentCardDisplayedIndex).getAnswer());
@@ -243,9 +327,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
                 flashcardQuestion.startAnimation(leftOutAnim);
-
-                // set the question and answer TextViews with data from the database
-
             }
         });
 
@@ -268,14 +349,11 @@ public class MainActivity extends AppCompatActivity {
                     wrongAnswer1.setText(null);
                     wrongAnswer2.setText(null);
                     currentCardDisplayedIndex = 0;
-                }
-
-                else{
+                } else {
                     if (currentCardDisplayedIndex == 0) {
                         // if deleting first card get next card
-                        currentCardDisplayedIndex ++;
-                    }
-                    else {
+                        currentCardDisplayedIndex++;
+                    } else {
                         // if deleting other card set card to previous card
                         currentCardDisplayedIndex--;
                     }
@@ -313,4 +391,5 @@ public class MainActivity extends AppCompatActivity {
                 allFlashcards = flashcardDatabase.getAllCards();    // Updates list of cards
             }
         }
+
     }
